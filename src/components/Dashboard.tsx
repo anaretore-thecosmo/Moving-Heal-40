@@ -8,7 +8,8 @@ import {
     Activity, Calendar, Clock, LogOut, Plus, RotateCcw, 
     Zap, ChevronRight, Play, Info, Loader2, Brain, 
     TrendingUp, Award, CheckCircle2, Heart, User, MapPin,
-    Search, LayoutGrid, History, Settings, Sparkles, Waves, Shield, Target, Camera
+    Search, LayoutGrid, History, Settings, Sparkles, Waves, Shield, Target, Camera,
+    ArrowLeft
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import WorkoutSessionPlayer from './WorkoutSessionPlayer';
@@ -412,6 +413,15 @@ export default function Dashboard({ profile, logout }: Props) {
             </div>
 
             <nav className="space-y-4">
+                {activeTab !== 'painel' && (
+                    <button 
+                        onClick={() => setActiveTab('painel')}
+                        className="flex items-center gap-3 p-4 text-gold bg-gold/[0.02] border border-gold/10 hover:border-gold/30 hover:bg-gold/[0.06] rounded-2xl transition-all w-full group animate-fade-in"
+                    >
+                        <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform shrink-0" />
+                        <span className="hidden lg:block text-[10px] font-black uppercase tracking-widest text-left">Voltar ao Início</span>
+                    </button>
+                )}
                 <MenuLink active={activeTab === 'painel'} icon={<LayoutGrid />} label="Painel" onClick={() => setActiveTab('painel')} />
                 <MenuLink active={activeTab === 'historico'} icon={<History />} label="Histórico" onClick={() => setActiveTab('historico')} />
                 <MenuLink active={activeTab === 'ajustes'} icon={<Settings />} label="Perfil" onClick={() => setActiveTab('ajustes')} />
@@ -829,6 +839,12 @@ export default function Dashboard({ profile, logout }: Props) {
 
         {activeTab === 'historico' && (
             <div className="space-y-12 max-w-4xl">
+                <button 
+                    onClick={() => setActiveTab('painel')}
+                    className="flex items-center gap-2 text-gold hover:text-white transition-colors font-semibold text-xs uppercase tracking-widest cursor-pointer"
+                >
+                    <ArrowLeft className="w-4 h-4" /> Voltar ao Painel Principal
+                </button>
                 <header className="space-y-2">
                     <h2 className="text-3xl font-bold uppercase tracking-tight">Registro de Sessões</h2>
                     <p className="text-slate-500 italic">Cada treino é uma peça do seu futuro eu.</p>
@@ -884,6 +900,12 @@ export default function Dashboard({ profile, logout }: Props) {
 
         {activeTab === 'ajustes' && (
             <div className="space-y-12 max-w-4xl">
+                <button 
+                    onClick={() => setActiveTab('painel')}
+                    className="flex items-center gap-2 text-gold hover:text-white transition-colors font-semibold text-xs uppercase tracking-widest cursor-pointer"
+                >
+                    <ArrowLeft className="w-4 h-4" /> Voltar ao Painel Principal
+                </button>
                  <header className="space-y-2">
                     <h2 className="text-3xl font-bold uppercase tracking-tight">Seu Perfil</h2>
                     <p className="text-slate-500 italic">Estrutura biológica e preferências cognitivas.</p>
