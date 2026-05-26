@@ -1,0 +1,85 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- Global Helpers ---
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // --- Connection Test Fix ---
+    // Mandatory for boot verification
+    match /test/connection {
+      allow get: if true;
+    }
+
+    // --- User Profile ---
+    match /users/{userId} {
+      function isValidUserProfile(data) {
+        return data.userId == userId &&
+               data.email is string &&
+               (data.get('displayName', '') is string);
+      }
+
+      allow get: if isOwner(userId) && isValidId(userId);
+      allow create: if isOwner(userId) && isValidId(userId) && 
+                    isValidUserProfile(incoming()) && 
+                    incoming().keys().hasAll(['userId', 'email']);
+      allow update: if isOwner(userId) && isValidId(userId) && 
+                    isValidUserProfile(incoming()) &&
+                    incoming().userId == existing().userId &&
+                    incoming().email == existing().email;
+
+      // --- Workouts ---
+      match /workouts/{workoutId} {
+        allow list: if isOwner(userId);
+        allow get: if isOwner(userId) && isValidId(workoutId);
+        allow create: if isOwner(userId) && isValidId(workoutId) && 
+                      incoming().userId == userId;
+        allow update: if isOwner(userId) && isValidId(workoutId) && 
+                      incoming().userId == userId;
+        allow delete: if isOwner(userId) && isValidId(workoutId);
+      }
+
+      // --- Sessions ---
+      match /sessions/{sessionId} {
+        allow list: if isOwner(userId);
+        allow get: if isOwner(userId) && isValidId(sessionId);
+        allow create: if isOwner(userId) && isValidId(sessionId) && 
+                      incoming().userId == userId;
+        allow update: if isOwner(userId) && isValidId(sessionId) && 
+                      incoming().userId == userId;
+        allow delete: if isOwner(userId) && isValidId(sessionId);
+      }
+      
+      // --- Evolution ---
+      match /evolution/{evId} {
+        allow list: if isOwner(userId);
+        allow get: if isOwner(userId) && isValidId(evId);
+        allow create: if isOwner(userId) && isValidId(evId) && 
+                      incoming().userId == userId;
+        allow delete: if isOwner(userId) && isValidId(evId);
+      }
+    }
+  }
+}

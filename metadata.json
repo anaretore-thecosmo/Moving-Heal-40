@@ -1,0 +1,6 @@
+{
+  "name": "Moving Heal +40",
+  "description": "Protocolo bio-adaptativo inteligente para longevidade e performance.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
